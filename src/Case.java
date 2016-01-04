@@ -13,10 +13,42 @@ public class Case extends JPanel{
 	private Terrain tcase;
 	
 	
+	
+
+
 	public Case(int x, int y, Terrain tcase){
-		x=x;
-		y=y;
-		tcase=tcase;
+		this.x=x;
+		this.y=y;
+		this.tcase=tcase;
 		
+	}
+	
+	public int getX() {
+		return x;
+	}
+
+
+	public void setX(int x) {
+		this.x = x;
+	}
+
+
+	public int getY() {
+		return y;
+	}
+
+
+	public void setY(int y) {
+		this.y = y;
+	}
+
+
+	public Terrain getTcase() {
+		return tcase;
+	}
+
+
+	public void setTcase(Terrain tcase) {
+		this.tcase = tcase;
 	}
 }
