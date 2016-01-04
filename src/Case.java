@@ -12,14 +12,18 @@ public class Case extends JPanel{
 	private int y;
 	private Terrain tcase;
 	
+	Border blackline = BorderFactory.createLineBorder(Color.black,1);
 	
-	
+	public Case(){
+		this.setBorder(blackline);
+	}
 
 
 	public Case(int x, int y, Terrain tcase){
 		this.x=x;
 		this.y=y;
 		this.tcase=tcase;
+		this.setBorder(blackline);
 		
 	}
 	
