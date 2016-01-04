@@ -61,7 +61,7 @@ public class Test {
 		t.add(pan);
 		t.setVisible(true);
 		
-		System.out.println("yolo");
+		System.out.println("vois tu ce message emmeran ?");
 	}
 
 }
