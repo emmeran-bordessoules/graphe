@@ -2,7 +2,10 @@
 
 import java.awt.Color;
 import java.util.Random;
+
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public class Grille extends JPanel{
 
@@ -11,6 +14,7 @@ public class Grille extends JPanel{
 	
 	Case case1 = new Case();
 	Random rand = new Random();
+	Border blackline = BorderFactory.createLineBorder(Color.black,1);
 	
 	public Grille(int x,int y){
 		this.tab= new Case[x][y];
@@ -18,6 +22,7 @@ public class Grille extends JPanel{
 		for(int i=0;i<x;i++){
 			for (int j=0;j<y;j++){
 				JPanel case1 = new JPanel();
+				this.setBorder(blackline);
 				float r = rand.nextFloat();
 				float g = rand.nextFloat();
 				float b = rand.nextFloat();
