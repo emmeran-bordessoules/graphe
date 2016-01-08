@@ -72,14 +72,14 @@ def manhattan_distance(p1, p2):
 def dist_between(p1, p2):
     return map[p2[1]][p2[0]]
 
-def astar(start, goal, neighbor_nodes, dist_between, heuristic_cost_estimate):
+def astar(start, goal, neighbor_nodes, dist_between, manhattan_distance):
     closedset = []
     openset   = [start]
     came_from = {}
     g_score   = {}
     f_score   = {}
     g_score[start] = 0
-    f_score[start] = g_score[start] + heuristic_cost_estimate(start, goal)
+    f_score[start] = g_score[start] + manhattan_distance(start, goal)
     while openset:
         current = min((f_score[node], node) for node in openset)[1]
         if current == goal:
@@ -88,7 +88,7 @@ def astar(start, goal, neighbor_nodes, dist_between, heuristic_cost_estimate):
         closedset.append(current)
         for neighbor in neighbor_nodes(current):
             tentative_g_score = g_score[current] + dist_between(current, neighbor)
-            tentative_f_score = tentative_g_score + heuristic_cost_estimate(neighbor, goal)
+            tentative_f_score = tentative_g_score + manhattan_distance(neighbor, goal)
             if neighbor in closedset and tentative_f_score >= f_score[neighbor]:
                 continue
             if neighbor not in openset or tentative_f_score < f_score[neighbor]:
@@ -108,11 +108,16 @@ def reconstruct_path(came_from, current_node):
 
 
 if __name__ == '__main__':
-    start = (29, 2)
+    agent = [(29, 2),(2,0),(4,7),(9,31),(22,31),(30,18),(31,27),(41,7),(40,10),(42,18),(40,20),(42,22),(35,34)]
     goal  = (21, 5)
-    path  = astar(start, goal, neighbor_nodes, dist_between, manhattan_distance)
-    if path:
-        print("====")
-        for position in reversed(path):
-            x,y = position
-            print(x,y)
+    for i in agent:
+        path  = astar(i, goal, neighbor_nodes, dist_between, manhattan_distance)
+        if path:
+            print("<=================>")
+            string = "De " + str(i) + " à " + str(goal)
+            print(string)
+            for position in reversed(path):
+                x,y = position
+                print(x,y)
+				
+os.system("pause")
