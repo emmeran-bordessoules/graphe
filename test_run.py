@@ -1,5 +1,5 @@
 import math
-import astar
+
 
 MAP_ROW = 37
 MAP_COL = 43
@@ -42,64 +42,64 @@ map = [[ 20, 20, 20, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 20, 20, 20, 20, 20,
 [ 20, 20, 20, 20, 5, 20, 20, 20, 20, 20, 20, 20, 20, 20, 70, 70, 70, 20, 20, -1, -1, -1, -1, 20, 20, 20, 70, 70, 70, 70, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ],
 [ 20, 20, 20, 20, 5, 20, 20, 20, 20, 20, 20, 20, 20, 70, 70, 70, 70, 20, 20, 20, 20, -1, -1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ]]
 
-def is_outside_map(x, y):
+def exterieur_map(x, y):
     if x < 0 or x > MAP_COL-1 or y < 0 or y > MAP_ROW-1:
         return True
     return False
 
-def is_block(x, y):
+def bloquer(x, y):
     if map[y][x] == -1:
         return True
     return False
 
-def is_movable(p):
+def peut_se_deplacer(p):
     x, y = p
-    if is_outside_map(x, y):
+    if exterieur_map(x, y):
         return False
-    if is_block(x, y):
+    if bloquer(x, y):
         return False
     return True
 
-def neighbor_nodes(p):
+def voisins_proches(p):
     x, y = p
-    neighbors = [(x-1, y), (x, y-1), (x+1, y), (x, y+1)]
-    return filter(is_movable, neighbors)
+    voisins = [(x-1, y), (x, y-1), (x+1, y), (x, y+1)]
+    return filter(peut_se_deplacer, voisins)
 
 
-def manhattan_distance(p1, p2):
+def distance_heuristique(p1, p2):
     return abs(p1[0]-p2[0]) + abs(p1[1]-p2[1])
 
-def dist_between(p1, p2):
+def distance_case(p1, p2):
     return map[p2[1]][p2[0]]
 
-def astar(start, goal, neighbor_nodes, dist_between, manhattan_distance):
+def astar(debut, cible, voisins_proches, distance_case, distance_heuristique):
     closedset = []
-    openset   = [start]
+    openset   = [debut]
     came_from = {}
     g_score   = {}
     f_score   = {}
-    g_score[start] = 0
-    f_score[start] = g_score[start] + manhattan_distance(start, goal)
+    g_score[debut] = 0
+    f_score[debut] = g_score[debut] + distance_heuristique(debut, cible)
     while openset:
         current = min((f_score[node], node) for node in openset)[1]
-        if current == goal:
-            return reconstruct_path(came_from, goal)
+        if current == cible:
+            return reconstruire_chemin(came_from, cible)
         openset.remove(current)
         closedset.append(current)
-        for neighbor in neighbor_nodes(current):
-            tentative_g_score = g_score[current] + dist_between(current, neighbor)
-            tentative_f_score = tentative_g_score + manhattan_distance(neighbor, goal)
-            if neighbor in closedset and tentative_f_score >= f_score[neighbor]:
+        for voisin in voisins_proches(current):
+            tentative_g_score = g_score[current] + distance_case(current, voisin)
+            tentative_f_score = tentative_g_score + distance_heuristique(voisin, cible)
+            if voisin in closedset and tentative_f_score >= f_score[voisin]:
                 continue
-            if neighbor not in openset or tentative_f_score < f_score[neighbor]:
-                came_from[neighbor] = current
-                g_score[neighbor] = tentative_g_score
-                f_score[neighbor] = tentative_f_score
-                if neighbor not in openset:
-                    openset.append(neighbor)
+            if voisin not in openset or tentative_f_score < f_score[voisin]:
+                came_from[voisin] = current
+                g_score[voisin] = tentative_g_score
+                f_score[voisin] = tentative_f_score
+                if voisin not in openset:
+                    openset.append(voisin)
     return None
 
-def reconstruct_path(came_from, current_node):
+def reconstruire_chemin(came_from, current_node):
     path = [current_node]
     while current_node in came_from:
         current_node = came_from[current_node]
@@ -109,15 +109,17 @@ def reconstruct_path(came_from, current_node):
 
 if __name__ == '__main__':
     agent = [(29, 2),(2,0),(4,7),(9,31),(22,31),(30,18),(31,27),(41,7),(40,10),(42,18),(40,20),(42,22),(35,34)]
-    goal  = (21, 5)
+    cible  = (21, 5)
     for i in agent:
-        path  = astar(i, goal, neighbor_nodes, dist_between, manhattan_distance)
+        path  = astar(i, cible, voisins_proches, distance_case, distance_heuristique)
         if path:
             print("<=================>")
-            string = "De " + str(i) + " à " + str(goal)
+            string = " Chemin De l'agent " + str(i) + " à la cible  " + str(cible)
             print(string)
             for position in reversed(path):
                 x,y = position
+                
                 print(x,y)
+               
 				
-os.system("pause")
+
