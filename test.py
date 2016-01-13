@@ -52,7 +52,7 @@ def mur_riviere(x, y): #test si la case est un mur ou une riviere
         return True
     return False
 
-def bloquer(p): #test si case est à l'extérieur, un mur ou une rivière
+def pas_bloquer(p): #test si case est à l'extérieur, un mur ou une rivière
     x, y = p
     if exterieur_carte(x, y):
         return False
@@ -63,7 +63,7 @@ def bloquer(p): #test si case est à l'extérieur, un mur ou une rivière
 def voisins_proches(p): #récupère les voisins accessibles
     x, y = p
     voisins = [(x-1, y), (x, y-1), (x+1, y), (x, y+1)]
-    return filter(bloquer, voisins)
+    return filter(pas_bloquer, voisins)
 
 
 def distance_heuristique(p1, p2): #distance heuristique entre 2 cases
@@ -81,7 +81,7 @@ def astar(debut, cible, voisins_proches, distance_case, distance_heuristique):
     g_score[debut] = 0
     f_score[debut] = g_score[debut] + distance_heuristique(debut, cible)
     while openset:
-        current = min((f_score[node], node) for node in openset)[1] #prend la seconde valeur de la plus petite distance heursitique
+        current = min((f_score[node], node) for node in openset)[1] #prend le coût de la plus petite distance heursitique
         if current == cible:
             return reconstruire_chemin(came_from, cible)
         openset.remove(current)
@@ -89,7 +89,7 @@ def astar(debut, cible, voisins_proches, distance_case, distance_heuristique):
         for voisin in voisins_proches(current):
             tentative_g_score = g_score[current] + distance_case(current, voisin)
             tentative_f_score = tentative_g_score + distance_heuristique(voisin, cible)
-            if voisin in closedset and tentative_f_score >= f_score[voisin]:
+            if voisin in closedset and tentative_f_score >= f_score[voisin]: #voisins déjà évalués et pas meilleur chemin
                 continue
             if voisin not in openset or tentative_f_score < f_score[voisin]: #bon chemin jusqu'à maintenant
                 came_from[voisin] = current
@@ -110,7 +110,7 @@ if __name__ == '__main__':
     agent = [(29, 2),(2,0),(4,7),(9,31),(22,31),(30,18),(31,27),(41,7),(40,10),(42,18),(40,20),(42,22),(35,34),(23,0)]
     cible  = (21, 5)
     for i in agent:
-        if not(bloquer(i)):
+        if not(pas_bloquer(i)):
             print("<=================>")
             print("L'agent "+str(i)+ " est bloqué")
         else:
