@@ -119,5 +119,3 @@ if __name__ == '__main__':
             for position in reversed(path):
                 x,y = position
                 print(x,y)
-				
-os.system("pause")
