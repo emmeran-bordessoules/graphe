@@ -42,46 +42,46 @@ map = [[ 20, 20, 20, 70, 70, 70, 70, 70, 70, 70, 70, 70, 70, 20, 20, 20, 20, 20,
 [ 20, 20, 20, 20, 5, 20, 20, 20, 20, 20, 20, 20, 20, 20, 70, 70, 70, 20, 20, -1, -1, -1, -1, 20, 20, 20, 70, 70, 70, 70, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ],
 [ 20, 20, 20, 20, 5, 20, 20, 20, 20, 20, 20, 20, 20, 70, 70, 70, 70, 20, 20, 20, 20, -1, -1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 ]]
 
-def exterieur_map(x, y):
+def exterieur_carte(x, y): #test si à l'extérieur de la carte
     if x < 0 or x > MAP_COL-1 or y < 0 or y > MAP_ROW-1:
         return True
     return False
 
-def bloquer(x, y):
+def mur_riviere(x, y): #test si la case est un mur ou une riviere
     if map[y][x] == -1:
         return True
     return False
 
-def peut_se_deplacer(p):
+def bloquer(p): #test si case est à l'extérieur, un mur ou une rivière
     x, y = p
-    if exterieur_map(x, y):
+    if exterieur_carte(x, y):
         return False
-    if bloquer(x, y):
+    if mur_riviere(x, y):
         return False
     return True
 
-def voisins_proches(p):
+def voisins_proches(p): #récupère les voisins accessibles
     x, y = p
     voisins = [(x-1, y), (x, y-1), (x+1, y), (x, y+1)]
-    return filter(peut_se_deplacer, voisins)
+    return filter(bloquer, voisins)
 
 
-def distance_heuristique(p1, p2):
+def distance_heuristique(p1, p2): #distance heuristique entre 2 cases
     return abs(p1[0]-p2[0]) + abs(p1[1]-p2[1])
 
-def distance_case(p1, p2):
+def distance_case(p1, p2): #distance réelle entre 2 cases, cette fonction est appelée entre voisins accessibles
     return map[p2[1]][p2[0]]
 
 def astar(debut, cible, voisins_proches, distance_case, distance_heuristique):
-    closedset = []
-    openset   = [debut]
-    came_from = {}
-    g_score   = {}
-    f_score   = {}
+    closedset = [] #liste des voisins évalués
+    openset   = [debut] #liste des cases à évaluer
+    came_from = {} #chemin parcouru
+    g_score   = {} #cout depuis la source
+    f_score   = {} #cout vers la destination
     g_score[debut] = 0
     f_score[debut] = g_score[debut] + distance_heuristique(debut, cible)
     while openset:
-        current = min((f_score[node], node) for node in openset)[1]
+        current = min((f_score[node], node) for node in openset)[1] #prend la seconde valeur de la plus petite distance heursitique
         if current == cible:
             return reconstruire_chemin(came_from, cible)
         openset.remove(current)
@@ -91,12 +91,11 @@ def astar(debut, cible, voisins_proches, distance_case, distance_heuristique):
             tentative_f_score = tentative_g_score + distance_heuristique(voisin, cible)
             if voisin in closedset and tentative_f_score >= f_score[voisin]:
                 continue
-            if voisin not in openset or tentative_f_score < f_score[voisin]:
+            if voisin not in openset or tentative_f_score < f_score[voisin]: #bon chemin jusqu'à maintenant
                 came_from[voisin] = current
                 g_score[voisin] = tentative_g_score
                 f_score[voisin] = tentative_f_score
-                if voisin not in openset:
-                    openset.append(voisin)
+                openset.append(voisin)
     return None
 
 def reconstruire_chemin(came_from, current_node):
@@ -108,21 +107,21 @@ def reconstruire_chemin(came_from, current_node):
 
 
 if __name__ == '__main__':
-    agent = [(29, 2),(2,0),(4,7),(9,31),(22,31),(30,18),(31,27),(41,7),(40,10),(42,18),(40,20),(42,22),(35,34)]
+    agent = [(29, 2),(2,0),(4,7),(9,31),(22,31),(30,18),(31,27),(41,7),(40,10),(42,18),(40,20),(42,22),(35,34),(23,0)]
     cible  = (21, 5)
     for i in agent:
-        path  = astar(i, cible, voisins_proches, distance_case, distance_heuristique)
-        if path:
+        if not(bloquer(i)):
             print("<=================>")
-            string = " Chemin De l'agent " + str(i) + " à la cible  " + str(cible)
-            print(string)
-            for position in reversed(path):
-                x,y = position
+            print("L'agent "+str(i)+ " est bloqué")
+        else:
+            path  = astar(i, cible, voisins_proches, distance_case, distance_heuristique)
+            if path:
+                print("<=================>")
+                string = " Chemin De l'agent " + str(i) + " à la cible  " + str(cible)
+                print(string)
+                for position in reversed(path):
+                    x,y = position
+                    print(x,y)
                 
-                print(x,y)
-<<<<<<< HEAD
-=======
-               
 				
 
->>>>>>> origin/master
